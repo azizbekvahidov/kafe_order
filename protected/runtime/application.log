@@ -1,0 +1,21 @@
+2020/02/26 13:32:48 [trace] [system.CModule] Loading "log" application component
+in F:\OSPanel\domains\eorder\index.php (13)
+2020/02/26 13:32:48 [trace] [system.CModule] Loading "bootstrap" application component
+in F:\OSPanel\domains\eorder\index.php (13)
+2020/02/26 13:32:48 [trace] [system.CModule] Loading "coreMessages" application component
+in F:\OSPanel\domains\eorder\index.php (13)
+2020/02/26 13:32:48 [error] [exception.CException] CException: Неправильный алиас "bootstrap.components.Booster". Убедитесь, что он указывает на существующую директорию или файл. in F:\OSPanel\domains\eorder\framework\YiiBase.php:347
+Stack trace:
+#0 F:\OSPanel\domains\eorder\framework\YiiBase.php(196): YiiBase::import('bootstrap.compo...', true)
+#1 F:\OSPanel\domains\eorder\framework\base\CModule.php(386): YiiBase::createComponent(Array)
+#2 F:\OSPanel\domains\eorder\framework\base\CModule.php(523): CModule->getComponent('bootstrap')
+#3 F:\OSPanel\domains\eorder\framework\base\CApplication.php(163): CModule->preloadComponents()
+#4 F:\OSPanel\domains\eorder\framework\YiiBase.php(125): CApplication->__construct(Array)
+#5 F:\OSPanel\domains\eorder\framework\YiiBase.php(98): YiiBase::createApplication('CWebApplication', 'F:\\OSPanel\\doma...')
+#6 F:\OSPanel\domains\eorder\index.php(13): YiiBase::createWebApplication('F:\\OSPanel\\doma...')
+#7 {main}
+REQUEST_URI=/
+---
+2020/02/26 13:32:48 [trace] [system.CModule] Loading "errorHandler" application component
+2020/02/26 13:32:48 [trace] [system.CModule] Loading "themeManager" application component
+2020/02/26 13:32:48 [trace] [system.CModule] Loading "request" application component
