@@ -34,6 +34,7 @@ class SiteController extends SetupController
 	public function actionIndex()
 	{
 
+        $user = (array)json_decode(json_decode($_POST['json'],true));
 
         $menuModel = Dishtype::model()->findAll('t.parent = :parent',array(':parent'=>0));
 
@@ -43,6 +44,7 @@ class SiteController extends SetupController
             ->from('tables')
             ->queryAll();
         $this->render('index',array(
+            'user'=>$user,
             'model'=>$model,
             'menuModel'=>$menuModel,
             'table'=>$table,

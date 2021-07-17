@@ -108,7 +108,7 @@
         <tr>
             <td class="text-center" colspan="4">
                 <? if(!empty($model)){?>
-                  <a style="padding: 3px 5px;" data-href="/expense/printExpCheck?exp=<?=$model['expense_id']?>" <?=($model['print'] == 1) ? "disabled" : ""?> type="button" name="button" class="btn btn-info expCheck">Напечатать счет</a>
+                  <a style="padding: 3px 5px;" href="javascript:;" <?=($model['print'] == 1) ? "disabled" : ""?> type="button" name="button" class="btn btn-info expCheck">Напечатать счет</a>
                     <br><br>
                   <a style="padding: 3px 5px;" href="#" onclick="closeExp(<?=$model['expense_id']?>)" type="button" name="button" class="btn btn-danger expClose hide">Закрыть счет</a>
                 <?}?>

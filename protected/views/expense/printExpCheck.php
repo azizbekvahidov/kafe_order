@@ -47,13 +47,12 @@
             text-align: center;
         }
     </style>
-
     <h3 class="text-center"><?=Yii::app()->config->get("name")?></h3>
     <h6 class="text-center"><?=date('d.m.Y')?><br><?=date("H:i:s")?></h6>
     <table class="">
         <tr>
             <th colspan="1">Открыт <?=$expense['order_date']?></th>
-            <th class="right" colspan="2">Счет № <span style="font-size:18px"><?=$expense['expense_id']?></span></th>
+            <th class="right" colspan="2">Счет № <?=$expense['expense_id']?></th>
         </tr>
         <tr>
             <th colspan="1">Официант <?=$expense['name']?></th>
@@ -119,33 +118,55 @@
         </tr>
         </tbody>
     </table>
-    <table>
-    <tr>
-        <th colspan="1">Сумма : </th>
-        <th></th>
-        <th class="right" colspan="2"><?=number_format(($summ)/100,0,',','')*100?></th>
-    </tr>
-<?if($check != 0){
-    if($expense["banket"] == 1){ $banket = Yii::app()->config->get("banket_percent");?>
-        <tr>
-            <th colspan="1"> Обслуживание банкет</th>
-            <th class="right" colspan="2"><?=number_format(($summ/100*$banket)/100,0,',','')*100?></th>
-        </tr>
-        </table>
-        <div class="result">
-            Итог : <?=number_format(($summ/100*$banket + $summ)/100,0,',','')*100?>
-        </div>
-    <?} else{?>
-        <tr>
-            <th colspan="1"> Обслуживание </th>
-            <th class="right" colspan="2"><?=number_format(($summ/100*$percent)/100,0,',','')*100?></th>
-        </tr>
-        </table>
-        <div class="result">
-            Итог : <?=number_format(($summ/100*$percent + $summ)/100,0,',','')*100?>
-        </div>
-    <?}?>
-<?} else{?>
+    
 
+    <table class="checktable">
+        <tr>
+            <th colspan="1">Сумма : </th>
+            <th></th>
+            <th class="right" colspan="2"><?=number_format(($summ)/100,0,',','')*100?></th>
+        </tr>
+        <? if($check != 0){?>
+
+                <tr>
+                    <th colspan="1"> Обслуживание (<?=$percent?>%):</th>
+                    <th></th>
+                    <th class="right" colspan="2"><?=number_format(($summ/100*$percent)/100,0,',','')*100?></th>
+                </tr>
+        <?}?>
+        <tr>
+            <th colspan="1">Всего : </th>
+            <th></th>
+            <th class="right" colspan="2"><?=number_format(($summ + ($check != 0 ? ($summ/100*$percent) : 0))/100,0,',','')*100?></th>
+        </tr>
+        <?if($expense["discount"] != null) {?>
+        <tr>
+            <th colspan="1">Скидка (<?=$expense["discount"]?>%): </th>
+            <th></th>
+            <th class="right" colspan="2"><?=(($summ + ($check != 0 ? ($summ/100*$percent) : 0))/100*$expense["discount"])?></th>
+        </tr>
+        <?}?>
+        <?if($check != 0){
+            if($expense["banket"] == 1){  $banket = Yii::app()->config->get("banket_percent");?>
+                <tr>
+                    <th colspan="1"> Обслуживание банкет</th>
+                    <th class="right" colspan="2"><?=number_format(($summ/100*$banket)/100,0,',','')*100?></th>
+                </tr>
+            </table>
+                <div class="result">
+                    Итог : <?=number_format(($summ/100*$banket + $summ)/100,0,',','')*100?>
+                </div>
+            <?} else{?>
+            </table>
+                <div class="result">
+                    Итог : <?=number_format(($summ/100*$percent + $summ-(($summ/100*$percent + $summ)/100*$expense["discount"]))/100,0,',','')*100?>
+                </div>
+            <?}?>
+        <?} else{?>
     </table>
-<?}?>
+
+    <div class="result">
+        Итог : <?=number_format(( $summ-($summ/100*$expense["discount"]))/100,0,',','')*100?>
+    </div>
+    <?}?>
+
