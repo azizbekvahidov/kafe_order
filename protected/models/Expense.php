@@ -521,72 +521,75 @@ class Expense extends CActiveRecord
     public function addExpenseList($prodId,$type,$date,$cnt,$dep = 0){
         
         try{
-        if($type == 1){
-            $model = Yii::app()->db->createCommand()
-                ->select()
-                ->from("dishes")
-                ->where("dish_id = :id",array(":id"=>$prodId))
-                ->queryRow();
-            $prod = Yii::app()->db->createCommand()
-                ->select()
-                ->from("dish_structure")
-                ->where("dish_id = :id",array(":id"=>$prodId))
-                ->queryAll();
-            $depId = 0;
-            if($dep == 0)
-                $depId = $model["department_id"];
-            else
-                $depId = $dep;
-            foreach ($prod as $item) {
-                $this->addProd($item["prod_id"],1,$date,$depId,($cnt*$item["amount"])/$model["count"]);
+            if($type == 1){
+                $model = Yii::app()->db->createCommand()
+                    ->select()
+                    ->from("dishes")
+                    ->where("dish_id = :id",array(":id"=>$prodId))
+                    ->queryRow();
+                $prod = Yii::app()->db->createCommand()
+                    ->select()
+                    ->from("dish_structure")
+                    ->where("dish_id = :id",array(":id"=>$prodId))
+                    ->queryAll();
+                $depId = 0;
+                if($dep == 0)
+                    $depId = $model["department_id"];
+                else
+                    $depId = $dep;
+                foreach ($prod as $item) {
+                    $this->addProd($item["prod_id"],1,$date,$depId,($cnt*$item["amount"])/$model["count"]);
+                }
+                $stuff = Yii::app()->db->createCommand()
+                    ->select()
+                    ->from("dish_structure2")
+                    ->where("dish_id = :id",array(":id"=>$prodId))
+                    ->queryAll();
+
+                foreach ($stuff as $item) {
+                    $this->addProd($item["halfstuff_id"],2,$date,$model["department_id"],($cnt*$item["amount"])/$model["count"]);
+                }
             }
-            $stuff = Yii::app()->db->createCommand()
-                ->select()
-                ->from("dish_structure2")
-                ->where("dish_id = :id",array(":id"=>$prodId))
-                ->queryAll();
+            else if($type == 2){
+                $model = Yii::app()->db->createCommand()
+                    ->select()
+                    ->from("halfstaff")
+                    ->where("halfstuff_id = :id",array(":id"=>$prodId))
+                    ->queryRow();
+                $depId = 0;
+                if($dep == 0)
+                    $depId = $model["department_id"];
+                else
+                    $depId = $dep;
+                $this->addProd($prodId,2,$date,$depId,$cnt);
 
-            foreach ($stuff as $item) {
-                $this->addProd($item["halfstuff_id"],2,$date,$model["department_id"],($cnt*$item["amount"])/$model["count"]);
+            }
+            else if($type == 3){
+                $model = Yii::app()->db->createCommand()
+                    ->select()
+                    ->from("products")
+                    ->where("product_id = :id",array(":id"=>$prodId))
+                    ->queryRow();
+                $depId = 0;
+                if($dep == 0)
+                    $depId = $model["department_id"];
+                else
+                    $depId = $dep;
+                $this->addProd($prodId,1,$date,$depId,$cnt);
             }
         }
-        else if($type == 2){
-            $model = Yii::app()->db->createCommand()
-                ->select()
-                ->from("halfstaff")
-                ->where("halfstuff_id = :id",array(":id"=>$prodId))
-                ->queryRow();
-            $depId = 0;
-            if($dep == 0)
-                $depId = $model["department_id"];
-            else
-                $depId = $dep;
-            $this->addProd($prodId,2,$date,$depId,$cnt);
+        catch(Exception $ex){
+            echo "<pre>";
+            print_r($ex->getMessage());
+            echo "</pre>";
 
         }
-        else if($type == 3){
-            $model = Yii::app()->db->createCommand()
-                ->select()
-                ->from("products")
-                ->where("product_id = :id",array(":id"=>$prodId))
-                ->queryRow();
-            $depId = 0;
-            if($dep == 0)
-                $depId = $model["department_id"];
-            else
-                $depId = $dep;
-            $this->addProd($prodId,1,$date,$depId,$cnt);
-        }
-    }
-    catch(Exception $ex){
-        echo "<pre>";
-        print_r($ex->getMessage());
-        echo "</pre>";
-
-    }
     }
     
     public function addProd($prodId,$type,$date,$depId,$cnt){
+        echo "<pre>";
+        print_r($prodId." => ".$cnt);
+        echo "</pre>";
         $storage = new Storage();
         $storage->removeToStorageDep($prodId,$cnt,$type,$depId);
         $model = Yii::app()->db->createCommand()
@@ -622,5 +625,4 @@ class Expense extends CActiveRecord
             ));
         }
     }
-
 }

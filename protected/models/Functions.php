@@ -274,12 +274,6 @@ class Functions {
           ->from('employee e')
           ->where('e.employee_id = :id',array(':id'=>$user))
           ->queryRow();
-
-      $tName = Yii::app()->db->createCommand()
-          ->select('')
-          ->from('tables t')
-          ->where('t.table_num = :id',array(':id'=>$table))
-          ->queryRow();
       if($action == 'create'){
           if(!empty($id))
               foreach ($id as $key => $val) {
@@ -388,18 +382,8 @@ class Functions {
                           break;
                   }
               }
-                        echo "<pre>";
-                        print_r($result);
-                        echo "</pre>";
           $result = $this->ShowChange($result,$resultArchive);
       }
-
-                        echo "<pre>";
-                        print_r($result);
-                        echo "</pre>";
-                        echo "<pre>";
-                        print_r($print);
-                        echo "</pre>";
       foreach($result as $key => $val) {
 
           $date=date("Y-m-d H:i:s");
@@ -411,7 +395,7 @@ class Functions {
               'printer' => $print[$key],
           ));
             $lastId = Yii::app()->db->getLastInsertID();
-          $this->PrintChecks($print,$val,$lastId,$user,$tName["name"],$key,$date, $this->recurseLimit);
+          $this->PrintChecks($print,$val,$lastId,$user,$table,$key,$date, $this->recurseLimit);
 
       }
 
@@ -430,7 +414,7 @@ class Functions {
 
             //          $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
             $printer->setTextSize(2, 2);
-            $printer->text($this->transliterate($key . "\n"));
+            $printer->text($key . "\n\n");
             $printer->selectPrintMode();
 
             $printer->setTextSize(1, 1);
@@ -441,16 +425,16 @@ class Functions {
                     'printId'=>$lastId,
                 ));
                 $order = new item($keys, $value);
-                $printer -> text($this->transliterate($order));
+                $printer -> text($order);
             }
             $printer->feed();
 
 
             //          $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-            $footer = new item($user["name"],"stol " . $table);
+            $footer = new item($user["name"],"стол " . $table);
 
             $printer->setTextSize(1, 1);
-            $printer->text($this->transliterate($footer));
+            $printer->text($footer);
             $printer->selectPrintMode();
 
 
@@ -526,9 +510,6 @@ class Functions {
                     }
                 }
             }
-        }
-        else{
-          $result = $array1;
         }
         return $result;
     }

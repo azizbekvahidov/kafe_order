@@ -117,7 +117,7 @@ class ExpenseController extends Controller
         $model = Yii::app()->db->createCommand()
             ->select('')
             ->from('expense ex')
-            ->where('ex.status = :status AND ex.deleted = 0 AND ex.debt != 1',array(':status'=>1))
+            ->where('ex.status = :status AND ex.deleted = 0',array(':status'=>1))
             ->order('ex.order_date')
             ->queryAll();
 
@@ -403,7 +403,7 @@ class ExpenseController extends Controller
                 $pCount = $_POST['peoples'];
 				if($_POST["check"] == 1) {
 				    if($_POST['banket'] == 0){
-                        $_POST['expSum']=number_format(($_POST['expSum'] + $_POST['expSum'] * $percent->getPercent(date("Y-m-d")) / 100) / 100, 0, ',', '') * 100;
+                        $_POST['expSum']=number_format(($_POST['expSum'] + $_POST['expSum'] * Yii::app()->config->get("percent") / 100) / 100, 0, ',', '') * 100;
                     }
                     else{
                         $_POST['expSum']=number_format(($_POST['expSum'] + $_POST['expSum'] * Yii::app()->config->get("banket_percent") / 100) / 100, 0, ',', '') * 100;
@@ -482,12 +482,14 @@ class ExpenseController extends Controller
                 $prodMessage = '';
                 $archive_message = '';
                 $expId = intval($_POST['expenseId']);
-                if($_POST['banket'] == 0){
-                    $_POST['expSum']=number_format(($_POST['expSum'] + $_POST['expSum'] * $percent->getPercent(date("Y-m-d")) / 100) / 100, 0, ',', '') * 100;
-                }
-                else{
-                    $_POST['expSum']=number_format(($_POST['expSum'] + $_POST['expSum'] * Yii::app()->config->get("banket_percent") / 100) / 100, 0, ',', '') * 100;
-                }
+				if($_POST["check"] == 1) {
+					if($_POST['banket'] == 0){
+						$_POST['expSum']=number_format(($_POST['expSum'] + $_POST['expSum'] * Yii::app()->config->get("percent") / 100) / 100, 0, ',', '') * 100;
+					}
+					else{
+						$_POST['expSum']=number_format(($_POST['expSum'] + $_POST['expSum'] * Yii::app()->config->get("banket_percent") / 100) / 100, 0, ',', '') * 100;
+					}
+				}
 				//Yii::app()->db->createCommand()->update('expense',array('expSum'=>$_POST['expSum'],'banket'=>$_POST['banket']),'expense_id = :id',array(':id'=>$expId));
                 
                 $refuseTime = date('Y-m-d H:i:s');
@@ -561,7 +563,7 @@ class ExpenseController extends Controller
                             'not_time'=>$refuseTime,
                             'refuse_time'=>$refuseTime
                         ));
-                        $expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count - $model["count"]);
+                        //$expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count - $model["count"]);
                     }
                 }
                 $refuse = Yii::app()->db->createCommand()
@@ -1136,7 +1138,7 @@ class ExpenseController extends Controller
           $model = Yii::app()->db->createCommand()
               ->select()
               ->from('expense ex')
-              ->where('ex.table = :table AND ex.employee_id = :user AND ex.status != 0 AND ex.debt != 1',array(':table'=>$table,':user'=>$user))
+              ->where('ex.table = :table AND ex.employee_id = :user AND ex.status != 0',array(':table'=>$table,':user'=>$user))
               ->queryAll();
       }
       else{
@@ -1156,10 +1158,10 @@ class ExpenseController extends Controller
     public function actionPrintExpCheck($exp){
         $percent = Yii::app()->config->get('percent');
         $expense = Yii::app()->db->createCommand()
-            ->select('ex.order_date,emp.name,ex.expense_id,ex.banket,t.name as Tname,emp.check_percent')
+            ->select('ex.order_date,emp.name,ex.expense_id,ex.banket,t.name as Tname,emp.check_percent,discount')
             ->from('expense ex')
             ->join('employee emp','emp.employee_id = ex.employee_id')
-            ->join('tables t','t.table_num = ex.table')
+            ->leftjoin('tables t','t.table_num = ex.table')
             ->where('ex.expense_id = :id ',array(':id'=>$exp))
             ->queryRow();
             
