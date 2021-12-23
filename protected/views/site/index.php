@@ -226,7 +226,7 @@
             <div class="zal">
                 <div class="col-md-2" style="position: absolute; top: -35%; right: -3%;">
                     <a class="costsBtn"  data-toggle="modal" data-target="#costs" href="#">
-                        Расходы
+                        <!--Расходы-->
                     </a>
                 </div>
         <? $cnt = 1;
@@ -243,7 +243,7 @@
             </div>
             <div class="self hide">
                 <div class="col-md-2">
-                    <a class="tableBtn table-0" data-toggle="modal"
+                    <a class="tableBtn table-0" id="table-0" data-toggle="modal"
                        data-target=".bs-example-modal-sm" href="#">
                         <?=0?>
                     </a>
@@ -336,7 +336,7 @@
                           data: 'expense='+expenses+"&user="+userData.employee_id,
                           success: function(data) {
                               $("#dataTable").html(data);
-                            $("#btnPrint").attr("data-href","/expense/printExpCheck?exp="+expenses);
+							$(".btnPrint").attr("data-href","/expense/printExpCheck?exp="+expenses);
                           }
                       });
 
@@ -456,7 +456,7 @@
 
                             <div class="form-actions pull-right submitDiv col-xs-12 " style="margin-top:45px;">
                                 <button class="btn btn-success " id="submitBtn" type="button">Добавить</button>
-                                <?=CHtml::link('<i class="fa fa-print"></i>  Печать',array('/expense/printCheck?id=0'),array('class'=>'btn hide',"id"=>"btnPrint"))?>
+                                <?=CHtml::link('<i class="fa fa-print"></i>  Печать',array('/expense/printCheck?id='.$id),array('class'=>'btn btnPrint hide'))?>
 
                             </div>
                         </td>
@@ -603,7 +603,8 @@
         });
     });
 
-    $(document).on('click','.expCheck',function(){$("#btnPrint").click();
+    $(document).on('click','.expCheck',function(){
+		$(".btnPrint").click();
         $('#createDiv').css('display','none');
         $('#loginDiv').css('display','block');
     });
@@ -1069,7 +1070,6 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#btnPrint").printPage();
         $(".cntPlus").cntChange();
         $(document).keyboard({
             language: 'russian,us',
