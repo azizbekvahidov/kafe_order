@@ -460,7 +460,7 @@ class ExpenseController extends Controller
                 $archive = new ArchiveOrder();
                 $archive->setArchive('create', $expId, $archive_message,$_POST['employee_id']);
                 //$transaction->commit();
-                $func->PrintCheck($expId,'create',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table']);
+                $func->PrintCheck($expId,'create',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
 
             } catch (Exception $e) {
                 echo "<pre>";
@@ -592,7 +592,7 @@ class ExpenseController extends Controller
                 $archive = new ArchiveOrder();
                 $archive->setArchive('update', $expId, $archive_message,$_POST['employee_id']);
 
-                $func->printCheck($expId,'update',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table']);
+                $func->printCheck($expId,'update',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
             }
             catch (Exception $e){
                 Yii::app()->user->setFlash('error', "{$e->getMessage()}");

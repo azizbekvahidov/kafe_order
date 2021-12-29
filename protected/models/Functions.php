@@ -264,10 +264,11 @@ class Functions {
     }
 
 
-    public function PrintCheck($expId,$action,$id,$user,$count,$table){
+    public function PrintCheck($expId,$action,$id,$user,$count,$table,$comment){
       $result = array();
       $depId = array();
       $archive = new ArchiveOrder();
+        $comments = array();
       $resultArchive = array();
       $user = Yii::app()->db->createCommand()
           ->select('')
@@ -282,6 +283,7 @@ class Functions {
                       $model = $this->getDish($expl[1],$action,$expId);
                       if($model != 0) {
                           $result[$model['depName']][$model['dName']]=$count[$key];
+                          $comments[$model['depName']][$model['dName']].=$comment[$key];
                           $print[$model['depName']]=$model['printer'];
                       }
                   }
@@ -289,6 +291,7 @@ class Functions {
                       $model = $this->getStuff($expl[1],$action,$expId);
                       if($model != 0) {
                           $result[$model['depName']][$model['dName']]=$count[$key];
+                          $comments[$model['depName']][$model['dName']].=$comment[$key];
                           $print[$model['depName']]=$model['printer'];
                       }
                   }
@@ -296,6 +299,7 @@ class Functions {
                       $model = $this->getProd($expl[1],$action,$expId);
                       if($model != 0) {
                           $result[$model['depName']][$model['dName']]=$count[$key];
+                          $comments[$model['depName']][$model['dName']].=$comment[$key];
                           $print[$model['depName']]=$model['printer'];
                       }
                   }
@@ -363,6 +367,7 @@ class Functions {
                           $model = $this->getDish($expl[1],$action,$expId);
                           if($model != 0) {
                               $result[$model['depName']][$model['dName']]=$count[$key];
+                              $comments[$model['depName']][$model['dName']].=$comment[$key];
                               $print[$model['depName']]=$model['printer'];
                           }
                           break;
@@ -370,6 +375,7 @@ class Functions {
                           $model = $this->getStuff($expl[1],$action,$expId);
                           if($model != 0) {
                               $result[$model['depName']][$model['dName']]=$count[$key];
+                              $comments[$model['depName']][$model['dName']].=$comment[$key];
                               $print[$model['depName']]=$model['printer'];
                           }
                           break;
@@ -377,6 +383,7 @@ class Functions {
                           $model = $this->getProd($expl[1],$action,$expId);
                           if($model != 0) {
                               $result[$model['depName']][$model['dName']]=$count[$key];
+                              $comments[$model['depName']][$model['dName']].=$comment[$key];
                               $print[$model['depName']]=$model['printer'];
                           }
                           break;
@@ -395,12 +402,12 @@ class Functions {
               'printer' => $print[$key],
           ));
             $lastId = Yii::app()->db->getLastInsertID();
-          $this->PrintChecks($print,$val,$lastId,$user,$table,$key,$date, $this->recurseLimit);
+          $this->PrintChecks($print,$val,$lastId,$user,$table,$key,$date, $this->recurseLimit,$comments[$key]);
 
       }
 
     }
-    public function PrintChecks($print,$val,$lastId,$user,$table,$key,$date, $limit){
+    public function PrintChecks($print,$val,$lastId,$user,$table,$key,$date, $limit,$comment){
         try {
             if (!empty($print[$key])) {
 //                $profile = CapabilityProfile::load("simple");
@@ -426,8 +433,11 @@ class Functions {
                 ));
                 $order = new item($keys, $value);
                 $printer -> text($order);
+                if($comment[$keys] != "") {
+                    $printer->text($comment[$keys]);
+                }
+                $printer->feed();
             }
-            $printer->feed();
 
 
             //          $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);

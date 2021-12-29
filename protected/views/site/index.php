@@ -44,6 +44,7 @@
         var tables;
         var people;
         var shifted = false;
+        var commentedElement = "";
         $(document).ready(function(){
 
             document.onkeyup = function (e) {
@@ -802,6 +803,7 @@
             summ += temp
             //sum += $(this).children('td:nth-child(3)').text();
         });
+        summ = parseInt(summ/100) * 100;
         $('#summ').text(summ);
     }
 
@@ -868,6 +870,39 @@
                 removeFromOrder(id,0);
             }*/
         });
+    });
+
+    $(document).on("click","#addCustomValue", function(e){
+
+            console.log($("#customValue").val());
+            cntObj.children("span").text($("#customValue").val());
+            cntObj.children("input").val($("#customValue").val());
+            getSum();
+            $("#customValue").val("");
+            $("#myModal").modal("hide");
+
+    });
+
+    $(document).on("click", ".dish", function () {
+        $("#comment").modal("show");
+        commentedElement = $(this).parent().attr('class');
+    });
+
+    $(document).on('click',"#saveComment", function () {
+        let text = $("#commentText").val();
+        $("."+commentedElement+" .dish>input").val(text);
+        $("#commentText").val("");
+        $("#comment").modal("hide");
+    });
+
+    $(document).on('hide.bs.modal','#comment', function () {
+        console.log("close modal");
+        $('#commentText').val("");
+    });
+
+    $(document).on('show.bs.modal','#comment', function () {
+        console.log("open and focus modal");
+        $('#commentText').focus();
     });
 
     $.fn.cntChange = function () {
@@ -953,6 +988,12 @@
                                 <img src="/images/dish_bg.jpg" alt="...">
                                 <h1 class="texts">-0.1</h1>
                             </a>
+                        </div>
+                        <div class="col-xs-5 col-md-5">
+                            <input type="number" class="form-control" id="customValue">
+                        </div>
+                        <div class="col-xs-1 col-md-1">
+                            <a href="javascript:;" id="addCustomValue" class="btn btn-info">OK</a>
                         </div>
                     </div>
                 </div>
@@ -1068,16 +1109,36 @@
   </div>
 </div>
 
+<div class="modal fade" id="comment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form action="" id="costsForm">
+                    <div class="form-group">
+                        <input type="text" id="commentText" placeholder="Комментарий к блюду" class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-default" id="saveComment" >Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script type="text/javascript">
     $(document).ready(function () {
         $(".cntPlus").cntChange();
         $(document).keyboard({
+
             language: 'russian,us',
             enterKey: function () {
                 //alert('Hey there! This is a callback function example.');
             },
             keyboardPosition: 'bottom',
-            directEnter: false
+            directEnter: true
         });
     });
 </script>

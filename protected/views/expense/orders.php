@@ -29,7 +29,7 @@
                         <i class=" fa fa-check"></i>
                         <input style="display:none" name="id[]" value="dish_<?=$val['just_id']?>">
                     </td>
-                    <td>
+                    <td class="dish"><input style='display:none' type='text' name='comment[]'>
                         <?=$val['name']?>
                     </td>
                     <td><?=$prices->getPrice($val['just_id'],$model['mType'],$val['type'],$model['order_date'])?></td>
@@ -55,7 +55,7 @@
                         <i class=" fa fa-check"></i>
                         <input style="display:none" name="id[]" value="stuff_<?=$val['just_id']?>">
                     </td>
-                    <td>
+                    <td class="dish"><input style='display:none' type='text' name='comment[]'>
                         <?=$val['name']?>
                     </td>
                     <td><?=$prices->getPrice($val['just_id'],$model['mType'],$val['type'],$dates)?></td>
@@ -81,7 +81,7 @@
                         <i class=" fa fa-check"></i>
                         <input style="display:none" name="id[]" value="product_<?=$val['just_id']?>">
                     </td>
-                    <td>
+                    <td class="dish"><input style='display:none' type='text' name='comment[]'>
                         <?=$val['name']?>
                     </td>
                     <td><?=$prices->getPrice($val['just_id'],$model['mType'],$val['type'],$dates)?></td>

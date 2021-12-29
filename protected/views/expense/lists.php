@@ -57,7 +57,7 @@
                                     <i class='  fa fa-times'></i>\
                                     <input style='display:none' name='id[]' value='"+thisId+"' />\
                                 </td>\
-                                <td>"+identifies+"</td>\
+                                <td class='dish'><input style='display:none' type='text' name='comment[]'>"+identifies+"</td>\
                                 <td>"+$(this).children('div').text()+"</td>\
                                 <td class='cnt'>\
                                     <input name='count[]' style='display:none' value='1' />\
