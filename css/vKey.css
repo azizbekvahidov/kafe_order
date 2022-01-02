@@ -161,7 +161,7 @@ em, i {
     color: #000;
     margin: 0;
     border: 2px solid #000;
-    font-size: 10vh;
+    font-size: 5vh;
     text-align: center;
     background: none;
     /*border-radius: 10px;*/
@@ -336,6 +336,10 @@ body{
 .thumbnail {
     font-size: 150%;
 }
+.thumbnail span{
+    font-size: 88%;
+    font-weight: bold;
+}
 
 .sidebar {
     width: 20%;
@@ -447,6 +451,13 @@ body{
 #tableNum{
     cursor: pointer;
 }
+#searchDiv{
+    display: none;
+    height: 210px;
+    width: 100%;
+    background-color: white;
+    overflow-y: scroll;
+}
 .btnDigit .buttons button{
     border: 0;
     width: 55px;
@@ -474,14 +485,14 @@ body{
     margin-left: 10%;
 }
 .navbar-static-top > ul.nav:first-child{
-    width: 50%;
+    width: 68%;
 }
 .navbar-static-top > ul.nav:last-child{
     width: 11%;
 }
 
 #expense-form > nav li {
-    margin-left: 5%;
+    /*margin-left: 5%;*/
 }
 #expense-form > nav a {
     line-height: 5vh!important;
@@ -520,12 +531,12 @@ body{
 }
 .element{
 
-    width: 16.3%;
+    width: 19.5%;
     display: inline-block;
     padding: 0 0.7%;
 }
 .thumbnail{
-    height: 20vh!important;
+    /*height: 20vh!important;*/
 }
 #menuList{
     border-right: 2px solid #000;
@@ -535,4 +546,9 @@ body{
 }
 .btn{
     font-size: 2vh!important;
+}
+.searchElement{
+    font-size: 16px;
+    border-bottom: 1px solid;
+    padding: 5px 5px;
 }

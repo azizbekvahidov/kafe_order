@@ -35,6 +35,10 @@ return array(
 //		),
 //        'order',
 //		'cooking',
+        'debug' => [
+            'class' => 'yii\debug\Module',
+            'allowedIPs' => ['*']
+        ]
 	),
 
 	// application components

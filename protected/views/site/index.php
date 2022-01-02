@@ -45,6 +45,7 @@
         var people;
         var shifted = false;
         var commentedElement = "";
+        var selectedInput = "";
         $(document).ready(function(){
 
             document.onkeyup = function (e) {
@@ -382,8 +383,13 @@
                     </div>
                 <?}?>
             </li>
-            <li>
-                <?//=CHtml::dropDownList('menuDrop','',$menu->getMenuList())?>
+            <li style="margin-top: 10px;">
+                <input type="text" class="form-control" id="searchMenu">
+                <div id="searchDiv">
+
+                </div>
+
+<!--                --><?//=CHtml::dropDownList('menuDrop','',$menu->getMenuList())?>
             </li>
         </ul>
         <ul class="nav navbar-nav pull-right">
@@ -580,6 +586,11 @@
             }
         });
     });
+    $(document).on("focus","#searchMenu",function (){
+        $("#searchDiv").css("display","block");
+        selectedInput = "searchMenu";
+    });
+
 
     $(document).on("click","#closeTerm", function () {
         var half = false;
@@ -875,8 +886,17 @@
     $(document).on("click","#addCustomValue", function(e){
 
             console.log($("#customValue").val());
+        if($("#action").val() == "update"){
+
+            if(parseFloat(cntObj.children("span").text()) <= $("#customValue").val()){
+                cntObj.children("span").text($("#customValue").val());
+                cntObj.children("input").val($("#customValue").val());
+            }
+        }
+        else if($("#action").val() == "create"){
             cntObj.children("span").text($("#customValue").val());
             cntObj.children("input").val($("#customValue").val());
+        }
             getSum();
             $("#customValue").val("");
             $("#myModal").modal("hide");
@@ -905,6 +925,60 @@
         $('#commentText').focus();
     });
 
+    function searchMenu(){
+        var searchTxt = $("#searchMenu").val();
+        var htmlTxt = "";
+        $.ajax({
+            type: "GET",
+            url: "<?php echo Yii::app()->createUrl('menu/searchList'); ?>",
+            data: "txt="+searchTxt,
+            success: function(data){
+                data = JSON.parse(data);
+                $.each(data, function(i, b) {
+                    htmlTxt += "<div class='searchElement' data-id='"+i+"'>"+b+"</div>";
+                });
+                $("#searchDiv").html(htmlTxt);
+            }
+        });
+    }
+
+    $(document).on("click",".searchElement", function (){
+
+        var texts = $(this).text();
+        var thisId = $(this).attr("data-id");
+        var temps = str_split(texts,1);
+        if($('#order tr.'+thisId).exists()){
+            var types = str_split(thisId,1);
+            var count = $('#order tr.'+thisId).children("td.cnt").children('input').val();
+            count = parseFloat(count)+1;
+            $('#order tr.'+thisId).children("td:first-child").children('input').val(types[1]);
+            $('#order tr.'+thisId).children("td.cnt").children('input').val(count);
+            $('#order tr.'+thisId).children("td.cnt").children('span').text(count);
+        }
+        else{
+            var types = str_split(thisId,1);
+            $('#order').append("<tr class="+thisId+">\
+                                <td class='removed'>\
+                                    <i class='  fa fa-times'></i>\
+                                    <input style='display:none' name='id[]' value='"+thisId+"' />\
+                                </td>\
+                                    <td class='dish'><input style='display:none' type='text' name='comment[]'>"+temps[0]+"</td>\
+                                    <td>"+temps[1]+"</td>\
+                                <td class='cnt'>\
+                                    <input name='count[]' style='display:none' value='1' />\
+                                    <a type='button' class='pluss btn hide'>\
+										<input name='' style='display:none' value='0'>\
+                                        <i class='fa fa-plus'></i>\
+                                    </a>\
+                                    <span>" +1+"</span>\
+                                    <a type='button' class='minus btn hide'>\
+                                        <i class='fa fa-minus'></i>\
+                                    </a>\
+                                </td>\
+                            </tr>");
+        }
+        getSum();
+    })
     $.fn.cntChange = function () {
         $(this).on('click',function() {
             var id = $(this).attr("id");
@@ -952,6 +1026,7 @@
         });
         return this;
     };
+
 
     </script>
     </form>
@@ -1132,9 +1207,13 @@
     $(document).ready(function () {
         $(".cntPlus").cntChange();
         $(document).keyboard({
-
             language: 'russian,us',
+            keyColor: "#000",
+            keyTextColor: "#fff",
             enterKey: function () {
+                searchMenu();
+                if(selectedInput){
+                }
                 //alert('Hey there! This is a callback function example.');
             },
             keyboardPosition: 'bottom',
