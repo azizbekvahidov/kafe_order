@@ -384,7 +384,13 @@
                 <?}?>
             </li>
             <li style="margin-top: 10px;">
-                <input type="text" class="form-control" id="searchMenu">
+                <div class="col-sm-12">
+                    <div class="col-sm-10"><input type="text" class="form-control" id="searchMenu"></div>
+                    <div class="col-sm-2">
+                        <a href="javascript:;" class="btn btn-danger" id="closeSearch"><i class="fa fa-close"></i></a>
+                    </div>
+                </div>
+
                 <div id="searchDiv">
 
                 </div>
@@ -589,6 +595,11 @@
     $(document).on("focus","#searchMenu",function (){
         $("#searchDiv").css("display","block");
         selectedInput = "searchMenu";
+    });
+
+    $(document).on("focus","#closeSearch",function (){
+        $("#searchDiv").css("display","none");
+        selectedInput = "";
     });
 
 
