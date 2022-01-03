@@ -50,79 +50,76 @@
 
             document.onkeyup = function (e) {
                 e = e || window.event;
-
-                console.log(shifted);
                 if(shifted === false) {
-                    if (e.keyCode === 16) {
-                        shifted = true;
-                    }
-                    if (e.keyCode === 96) {
-                        $(".num0.digit").click();
-                    }
-                    if (e.keyCode === 97) {
-                        $(".num1.digit").click();
-                    }
-                    if (e.keyCode === 98) {
-                        $(".num2.digit").click();
-                    }
-                    if (e.keyCode === 99) {
-                        $(".num3.digit").click();
-                    }
-                    if (e.keyCode === 100) {
-                        $(".num4.digit").click();
-                    }
-                    if (e.keyCode === 101) {
-                        $(".num5.digit").click();
-                    }
-                    if (e.keyCode === 102) {
-                        $(".num6.digit").click();
-                    }
-                    if (e.keyCode === 103) {
-                        $(".num7.digit").click();
-                    }
-                    if (e.keyCode === 104) {
-                        $(".num8.digit").click();
-                    }
-                    if (e.keyCode === 105) {
-                        $(".num9.digit").click();
-                    }
-                    if (e.keyCode === 48) {
-                        $(".num0.digit").click();
-                    }
-                    if (e.keyCode === 49) {
-                        $(".num1.digit").click();
-                    }
-                    if (e.keyCode === 50) {
-                        $(".num2.digit").click();
-                    }
-                    if (e.keyCode === 51) {
-                        $(".num3.digit").click();
-                    }
-                    if (e.keyCode === 52) {
-                        $(".num4.digit").click();
-                    }
-                    if (e.keyCode === 53) {
-                        $(".num5.digit").click();
-                    }
-                    if (e.keyCode === 54) {
-                        $(".num6.digit").click();
-                    }
-                    if (e.keyCode === 55) {
-                        $(".num7.digit").click();
-                    }
-                    if (e.keyCode === 56) {
-                        $(".num8.digit").click();
-                    }
-                    if (e.keyCode === 57) {
-                        $(".num9.digit").click();
+                    switch (e.keyCode) {
+                        case 16:
+                            shifted = true;
+                            break;
+                        case 96:
+                            $(".num0.digit").click();
+                            break;
+                        case 97:
+                            $(".num1.digit").click();
+                            break;
+                        case 98:
+                            $(".num2.digit").click();
+                            break;
+                        case 99:
+                            $(".num3.digit").click();
+                            break;
+                        case 100:
+                            $(".num4.digit").click();
+                            break;
+                        case 101:
+                            $(".num5.digit").click();
+                            break;
+                        case 102:
+                            $(".num6.digit").click();
+                            break;
+                        case 103:
+                            $(".num7.digit").click();
+                            break;
+                        case 104:
+                            $(".num8.digit").click();
+                            break;
+                        case 105:
+                            $(".num9.digit").click();
+                            break;
+                        case 48:
+                            $(".num0.digit").click();
+                            break;
+                        case 49:
+                            $(".num1.digit").click();
+                            break;
+                        case 50:
+                            $(".num2.digit").click();
+                            break;
+                        case 51:
+                            $(".num3.digit").click();
+                            break;
+                        case 52:
+                            $(".num4.digit").click();
+                            break;
+                        case 53:
+                            $(".num5.digit").click();
+                            break;
+                        case 54:
+                            $(".num6.digit").click();
+                            break;
+                        case 55:
+                            $(".num7.digit").click();
+                            break;
+                        case 56:
+                            $(".num8.digit").click();
+                            break;
+                        case 57:
+                            $(".num9.digit").click();
+                            break;
                     }
                 }
                 else{
                     shifted = false;
                 }
-                // if (e.keyCode === 13) {
-                //     $("#submitBtn").click();
-                // }
 
                 // Отменяем действие браузера
                 return false;
@@ -385,9 +382,9 @@
             </li>
             <li style="margin-top: 10px;">
                 <div class="col-sm-12">
-                    <div class="col-sm-10"><input type="text" class="form-control" id="searchMenu"></div>
+                    <div class="col-sm-10"><input type="text" class="form-control" id="searchMenu" placeholder="Введите мин 3 символа"></div>
                     <div class="col-sm-2">
-                        <a href="javascript:;" class="btn btn-danger" id="closeSearch"><i class="fa fa-close"></i></a>
+                        <a href="#" class="btn btn-danger" id="closeSearch"><i class="fa fa-close"></i></a>
                     </div>
                 </div>
 
@@ -597,8 +594,17 @@
         selectedInput = "searchMenu";
     });
 
-    $(document).on("focus","#closeSearch",function (){
+    $(document).on("keyup","#searchMenu",function (e){
+        if(e.keyCode === 13){
+            searchMenu();
+        }
+    });
+
+    $(document).on("click","#closeSearch",function (){
+        console.log("clicked");
         $("#searchDiv").css("display","none");
+        $("#searchMenu").val("");
+        $("#searchDiv").html("");
         selectedInput = "";
     });
 
@@ -939,22 +945,25 @@
     function searchMenu(){
         var searchTxt = $("#searchMenu").val();
         var htmlTxt = "";
-        $.ajax({
-            type: "GET",
-            url: "<?php echo Yii::app()->createUrl('menu/searchList'); ?>",
-            data: "txt="+searchTxt,
-            success: function(data){
-                data = JSON.parse(data);
-                $.each(data, function(i, b) {
-                    htmlTxt += "<div class='searchElement' data-id='"+i+"'>"+b+"</div>";
-                });
-                $("#searchDiv").html(htmlTxt);
-            }
-        });
+        if(searchTxt.length >= 3) {
+            $.ajax({
+                type: "GET",
+                url: "<?php echo Yii::app()->createUrl('menu/searchList'); ?>",
+                data: "txt=" + searchTxt,
+                success: function (data) {
+                    data = JSON.parse(data);
+                    $.each(data, function (i, b) {
+                        htmlTxt += "<div class='searchElement' data-id='" + i + "'>" + b + "</div>";
+                    });
+                    $("#searchDiv").html(htmlTxt);
+                }
+            });
+        }
     }
 
     $(document).on("click",".searchElement", function (){
-
+        $(".searchElement").removeClass("activeSearchElement");
+        $(this).addClass("activeSearchElement");
         var texts = $(this).text();
         var thisId = $(this).attr("data-id");
         var temps = str_split(texts,1);
@@ -989,7 +998,8 @@
                             </tr>");
         }
         getSum();
-    })
+    });
+
     $.fn.cntChange = function () {
         $(this).on('click',function() {
             var id = $(this).attr("id");
@@ -1216,14 +1226,16 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+
         $(".cntPlus").cntChange();
         $(document).keyboard({
             language: 'russian,us',
             keyColor: "#000",
             keyTextColor: "#fff",
             enterKey: function () {
-                searchMenu();
-                if(selectedInput){
+
+                if(selectedInput == "searchMenu"){
+                    searchMenu();
                 }
                 //alert('Hey there! This is a callback function example.');
             },

@@ -552,3 +552,7 @@ body{
     border-bottom: 1px solid;
     padding: 5px 5px;
 }
+.activeSearchElement{
+    color: #000;
+    background-color: lightblue;
+}
