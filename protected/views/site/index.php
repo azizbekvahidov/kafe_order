@@ -380,7 +380,7 @@
                     </div>
                 <?}?>
             </li>
-            <li style="margin-top: 10px;">
+            <li style="margin-top: 10px; width: 42%">
                 <div class="col-sm-12">
                     <div class="col-sm-10"><input type="text" class="form-control" id="searchMenu" placeholder="Введите мин 3 символа"></div>
                     <div class="col-sm-2">
@@ -594,11 +594,6 @@
         selectedInput = "searchMenu";
     });
 
-    $(document).on("keyup","#searchMenu",function (e){
-        if(e.keyCode === 13){
-            searchMenu();
-        }
-    });
 
     $(document).on("click","#closeSearch",function (){
         console.log("clicked");
@@ -655,6 +650,7 @@
         $("#Expense_comment").val('');
         $('#createDiv').css('display','none');
         $('#loginDiv').css('display','block');
+        $("#closeSearch").click();
         getSum();
         userData = '';
     });
@@ -971,7 +967,7 @@
             var types = str_split(thisId,1);
             var count = $('#order tr.'+thisId).children("td.cnt").children('input').val();
             count = parseFloat(count)+1;
-            $('#order tr.'+thisId).children("td:first-child").children('input').val(types[1]);
+            $('#order tr.'+thisId).children("td:first-child").children('input').val(thisId);
             $('#order tr.'+thisId).children("td.cnt").children('input').val(count);
             $('#order tr.'+thisId).children("td.cnt").children('span').text(count);
         }
