@@ -945,12 +945,18 @@
             $.ajax({
                 type: "GET",
                 url: "<?php echo Yii::app()->createUrl('menu/searchList'); ?>",
-                data: "txt=" + searchTxt,
+                data: "txt=" + encodeURIComponent(searchTxt),
                 success: function (data) {
                     data = JSON.parse(data);
-                    $.each(data, function (i, b) {
-                        htmlTxt += "<div class='searchElement' data-id='" + i + "'>" + b + "</div>";
-                    });
+                    if(data.length != 0) {
+                        $.each(data, function (i, b) {
+                            htmlTxt += "<div class='searchElement' data-id='" + i + "'>" + b + "</div>";
+                        });
+                    }
+                    else{
+                        htmlTxt += "<div> Ничего не надено</div>";
+
+                    }
                     $("#searchDiv").html(htmlTxt);
                 }
             });

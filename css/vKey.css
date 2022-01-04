@@ -495,7 +495,7 @@ body{
     /*margin-left: 5%;*/
 }
 #expense-form > nav a {
-    line-height: 5vh!important;
+    line-height: 3vh!important;
 }
 #expense-form > nav{
     height: 8vh;
@@ -508,7 +508,7 @@ body{
     margin-top: 2.5vh;
 }
 #orders{
-    margin-top: 2.3vh;
+    margin-top: 10px;
 }
 
 .right-sidebar > div:first-child{
