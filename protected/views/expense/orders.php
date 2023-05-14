@@ -1,4 +1,4 @@
-<?$prices = new Prices(); $summ = 0;?>
+<?$prices = new Prices(); $summ = 0; $dates = date("yyyy-MM-dd HH:ii:ss")?>
 
     <thead>
         <tr>
@@ -115,14 +115,3 @@
             </td>
         </tr>
     </tfoot>
-
-<?if($model["banket"] == 1){?>
-    <script>
-        $("#banket").attr("checked","checked");
-    </script>
-<?}else{?>
-    <script>
-        $("#banket").removeAttr("checked");
-
-    </script>
-<?}?>

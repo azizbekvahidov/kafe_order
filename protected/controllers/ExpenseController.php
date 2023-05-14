@@ -123,37 +123,43 @@ class ExpenseController extends Controller
 
     public function actionOrders(){
         $res = array();
-        $model = Yii::app()->db->createCommand()
-            ->select('')
-            ->from('expense ex')
-            ->where('ex.expense_id = :id',array(':id'=>$_POST['expense']))
-            ->order('ex.order_date')
-            ->queryRow();
-        $order = Yii::app()->db->createCommand()
-            ->select('ord.just_id,ord.count,d.name,ord.type,ord.order_id')
-            ->from('orders ord')
-            ->join('dishes d','d.dish_id = ord.just_id')
-            ->where('ord.expense_id = :id AND ord.type = :types AND ord.deleted = 0',array(':id'=>$model['expense_id'],':types'=>1))
-            ->queryAll();
-        $order2 = Yii::app()->db->createCommand()
-            ->select('ord.just_id,ord.count,h.name,ord.type,ord.order_id')
-            ->from('orders ord')
-            ->join('halfstaff h','h.halfstuff_id = ord.just_id')
-            ->where('ord.expense_id = :id AND ord.type = :types AND ord.deleted = 0',array(':id'=>$model['expense_id'],':types'=>2))
-            ->queryAll();
-        $order3 = Yii::app()->db->createCommand()
-            ->select('ord.just_id,ord.count,p.name,ord.type,ord.order_id')
-            ->from('orders ord')
-            ->join('products p','p.product_id = ord.just_id')
-            ->where('ord.expense_id = :id AND ord.type = :types AND ord.deleted = 0',array(':id'=>$model['expense_id'],':types'=>3))
-            ->queryAll();
+        $model = array();
+        $order = array();
+        $order2 = array();
+        $order3 = array();
+        if(isset($_POST["expense"])) {
+            $model = Yii::app()->db->createCommand()
+                ->select('')
+                ->from('expense ex')
+                ->where('ex.expense_id = :id', array(':id' => $_POST['expense']))
+                ->order('ex.order_date')
+                ->queryRow();
+            $order = Yii::app()->db->createCommand()
+                ->select('ord.just_id,ord.count,d.name,ord.type,ord.order_id')
+                ->from('orders ord')
+                ->join('dishes d', 'd.dish_id = ord.just_id')
+                ->where('ord.expense_id = :id AND ord.type = :types AND ord.deleted = 0', array(':id' => $model['expense_id'], ':types' => 1))
+                ->queryAll();
+            $order2 = Yii::app()->db->createCommand()
+                ->select('ord.just_id,ord.count,h.name,ord.type,ord.order_id')
+                ->from('orders ord')
+                ->join('halfstaff h', 'h.halfstuff_id = ord.just_id')
+                ->where('ord.expense_id = :id AND ord.type = :types AND ord.deleted = 0', array(':id' => $model['expense_id'], ':types' => 2))
+                ->queryAll();
+            $order3 = Yii::app()->db->createCommand()
+                ->select('ord.just_id,ord.count,p.name,ord.type,ord.order_id')
+                ->from('orders ord')
+                ->join('products p', 'p.product_id = ord.just_id')
+                ->where('ord.expense_id = :id AND ord.type = :types AND ord.deleted = 0', array(':id' => $model['expense_id'], ':types' => 3))
+                ->queryAll();
+        }
 
         $this->renderPartial('orders',array(
             'order'=>$order,
             'order2'=>$order2,
             'order3'=>$order3,
             'model'=>$model,
-            'dates'=>$dates
+//            'dates'=>$dates
         ));
 
     }
