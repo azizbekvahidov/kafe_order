@@ -464,7 +464,7 @@ class ExpenseController extends Controller
                 $archive = new ArchiveOrder();
                 $archive->setArchive('create', $expId, $archive_message,$_POST['employee_id']);
                 //$transaction->commit();
-                $func->PrintCheck($expId,'create',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
+//                $func->PrintCheck($expId,'create',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
 
             } catch (Exception $e) {
                 Yii::app()->db->createCommand()->insert('logs',array(
@@ -604,8 +604,31 @@ class ExpenseController extends Controller
 
                 $archive = new ArchiveOrder();
                 $archive->setArchive('update', $expId, $archive_message,$_POST['employee_id']);
+                $_POST["method"] = "update";
 
-                $func->printCheck($expId,'update',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
+                $ch = curl_init();
+
+                curl_setopt($ch, CURLOPT_URL,"http://print/site/checkPrint");
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS,
+                    http_build_query($_POST));
+
+// In real life you should use something like:
+// curl_setopt($ch, CURLOPT_POSTFIELDS,
+//          http_build_query(array('postvar1' => 'value1')));
+
+// Receive server response ...
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                $server_output = curl_exec($ch);
+                echo "<pre>";
+                print_r($server_output);
+                echo "</pre>";
+
+                curl_close($ch);
+
+//                $func->printCheck($expId,'update',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
             }
             catch (Exception $e){
                 Yii::app()->db->createCommand()->insert('logs',array(

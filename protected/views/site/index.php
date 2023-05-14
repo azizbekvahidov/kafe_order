@@ -643,7 +643,25 @@
         $.ajax({
             type: "POST",
             url: "<?php echo Yii::app()->createUrl('expense/create'); ?>",
-            data: data+"&table="+tables+"&employee_id="+userData.employee_id+"&expenseId="+ $.session.get('expId')+"&peoples="+people+"&expSum="+expSum+"&check="+userData.check_percent+"&banket="+banket
+            data: data+"&table="+tables+"&employee_id="+userData.employee_id+"&expenseId="+ $.session.get('expId')+"&peoples="+people+"&expSum="+expSum+"&check="+userData.check_percent+"&banket="+banket,
+            success: function(response) {
+                // $.ajax({
+                //     cors: true ,
+                //     contentType:'application/json',
+                //     secure: true,
+                //     headers: {
+                //         'Access-Control-Allow-Origin': 'x-requested-with ',
+                //     },
+                //     dataType: 'json',
+                //     type: "POST",
+                //     url: "http://print/site/checkPrint",
+                //     data: data + "&table=" + tables + "&employee_id=" + userData.employee_id + "&expenseId=" + $.session.get('expId') + "&peoples=" + people + "&expSum=" + expSum + "&check=" + userData.check_percent + "&banket=" + banket,
+                //     success: function (res) {
+                //
+                //     }
+                // });
+            }
+
         });
         $('#order').children('tr').remove();
         $('#Expense_debt').removeAttr('checked');
