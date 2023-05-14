@@ -462,7 +462,7 @@ class ExpenseController extends Controller
                 //$expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count);
                 $archive_message .= ((!empty($dishMessage)) ? $dishMsg.$dishMessage : '').((!empty($stuffMessage)) ? $stuffMsg.$stuffMessage : '').((!empty($prodMessage)) ? $prodMsg.$prodMessage : '');
                 //$transaction->commit();
-                $_POST["message"] = "$archive_message";
+                $_POST["message"] = $archive_message;
 //                $func->PrintCheck($expId,'create',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
                 $_POST["method"] = "create";
 
@@ -625,7 +625,7 @@ class ExpenseController extends Controller
                 $archive_message .= ((!empty($dishMessage)) ? $dishMsg.$dishMessage : '').((!empty($stuffMessage)) ? $stuffMsg.$stuffMessage : '').((!empty($prodMessage)) ? $prodMsg.$prodMessage : '');
 
                 $_POST["method"] = "update";
-                $_POST["message"] = "$archive_message";
+                $_POST["message"] = $archive_message;
 
                 $ch = curl_init();
 
