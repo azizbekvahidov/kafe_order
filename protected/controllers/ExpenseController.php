@@ -107,17 +107,14 @@ class ExpenseController extends Controller
                 'tables'=>$tables,
                 'curTables'=>$curTables
             ));
-
-
         }
     }
-
     public function actionTables(){
         $dates = date('Y-m-d');
         $model = Yii::app()->db->createCommand()
             ->select('')
             ->from('expense ex')
-            ->where('ex.status = :status AND ex.deleted = 0',array(':status'=>1))
+            ->where('ex.status = :status AND ex.debt = 0 ',array(':status'=>1))
             ->order('ex.order_date')
             ->queryAll();
 
@@ -385,6 +382,7 @@ class ExpenseController extends Controller
 
     public function actionCreate()
     {
+
         $expense = new Expense();
 		    $model=new Expense;
         $func = new Functions();
@@ -445,15 +443,15 @@ class ExpenseController extends Controller
                         'count'=>$count,
                         'type'=>$types
                     ));
-                    $expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count);
-                    $order_id = Yii::app()->db->getLastInsertID();
-                    Yii::app()->db->createCommand()->insert('orderRefuse',array(
-                        'order_id'=>$order_id,
-                        'count'=>$count,
-                        'add'=>1,
-                        'not_time'=>$dates,
-                        'refuse_time'=>$dates
-                    ));
+//                    $expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count);
+//                    $order_id = Yii::app()->db->getLastInsertID();
+//                    Yii::app()->db->createCommand()->insert('orderRefuse',array(
+//                        'order_id'=>$order_id,
+//                        'count'=>$count,
+//                        'add'=>1,
+//                        'not_time'=>$dates,
+//                        'refuse_time'=>$dates
+//                    ));
                 }
                 //$expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count);
                 $archive_message .= ((!empty($dishMessage)) ? $dishMsg.$dishMessage : '').((!empty($stuffMessage)) ? $stuffMsg.$stuffMessage : '').((!empty($prodMessage)) ? $prodMsg.$prodMessage : '');
@@ -463,9 +461,15 @@ class ExpenseController extends Controller
                 $func->PrintCheck($expId,'create',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
 
             } catch (Exception $e) {
-                echo "<pre>";
-                print_r($e->getMessage());
-                echo "</pre>";
+                Yii::app()->db->createCommand()->insert('logs',array(
+                    'log_date'=> date("YYY-mm-dd HH:ii:ss"),
+                    'action'=>"order exception",
+                    'message'=>$e->getMessage(),
+                    'table_name'=>"",
+                    'count'=>0,
+                    'curId'=>$expId,
+                    'is_sync'=>0,
+                ));
                 //$transaction->rollBack();
                 Yii::app()->user->setFlash('error', "{$e->getMessage()}");
                 //$this->refresh();
@@ -510,13 +514,13 @@ class ExpenseController extends Controller
                         $types = 3;
                         $prodMessage .= $temp[1].":".$count.",";
                     }
-
                     $model = Yii::app()->db->createCommand()
                         ->select()
                         ->from('orders')
                         ->where('expense_id = :id AND just_id = :just_id AND type = :types ',array(':id'=>$expId,':just_id'=>$temp[1],':types'=>$types))
                         ->queryRow();
                     if(!empty($model)){
+                        print_r($model,"sss");
 
                         if($count != 0) {
                             /*if ($model['count'] > $count) {
@@ -525,8 +529,9 @@ class ExpenseController extends Controller
                             if ($model['count'] < $count) {
                                 Yii::app()->db->createCommand()->update('orders', array(
                                     'count' => $count,
-                                    'deleted'=>0
-                                ), 'order_id = :id', array(':id' => $model['order_id']));
+                                    'deleted'=>0,
+
+                                ), 'order_id = :id ', array(':id' => $model['order_id']));
                             }
 //                            if(($model['count'] > $count && $model['deleted'] == 1) or ($model['count'] == $count && $model['deleted'] == 1)){
 //                                Yii::app()->db->createCommand()->update('orders', array(
@@ -534,7 +539,9 @@ class ExpenseController extends Controller
 //                                    'deleted'=>0
 //                                ), 'order_id = :id', array(':id' => $model['order_id']));
 //                            }
-                            $expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count - $model["count"]);
+
+//                            $expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count - $model["count"]);
+                            print_r($model,"sss");
                             Yii::app()->db->createCommand()->update('expense',array('expSum'=>$_POST['expSum'],'banket'=>$_POST['banket']),'expense_id = :id',array(':id'=>$expId));
                         } 
                         /*else{
@@ -555,29 +562,29 @@ class ExpenseController extends Controller
                             'count'=>$count,
                             'type'=>$types
                         ));
-                        $order_id = Yii::app()->db->getLastInsertID();
-                        Yii::app()->db->createCommand()->insert('orderRefuse',array(
-                            'order_id'=>$order_id,
-                            'count'=>$count,
-                            'add'=>1,
-                            'not_time'=>$refuseTime,
-                            'refuse_time'=>$refuseTime
-                        ));
+//                        $order_id = Yii::app()->db->getLastInsertID();
+//                        Yii::app()->db->createCommand()->insert('orderRefuse',array(
+//                            'order_id'=>$order_id,
+//                            'count'=>$count,
+//                            'add'=>1,
+//                            'not_time'=>$refuseTime,
+//                            'refuse_time'=>$refuseTime
+//                        ));
                         //$expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count - $model["count"]);
                     }
                 }
-                $refuse = Yii::app()->db->createCommand()
-                    ->select()
-                    ->from('orders')
-                    ->where('expense_id = :id AND deleted = 1 AND status = 1 AND count != 0',array(':id'=>$expId))
-                    ->queryAll();
-                if(!empty($refuse)){
-                    foreach ($refuse as $val) {
-                        Yii::app()->db->createCommand()->update('orders',array(
-                            'count'=>0,
-                        ), 'order_id = :id',array(':id'=>$val['order_id']));
-                    }
-                }
+//                $refuse = Yii::app()->db->createCommand()
+//                    ->select()
+//                    ->from('orders')
+//                    ->where('expense_id = :id AND deleted = 1 AND status = 1 AND count != 0',array(':id'=>$expId))
+//                    ->queryAll();
+//                if(!empty($refuse)){
+//                    foreach ($refuse as $val) {
+//                        Yii::app()->db->createCommand()->update('orders',array(
+//                            'count'=>0,
+//                        ), 'order_id = :id',array(':id'=>$val['order_id']));
+//                    }
+//                }
 
                 if(!empty($tempModel)){
                     foreach ($tempModel as $val) {
@@ -595,6 +602,15 @@ class ExpenseController extends Controller
                 $func->printCheck($expId,'update',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
             }
             catch (Exception $e){
+                Yii::app()->db->createCommand()->insert('logs',array(
+                            'log_date'=> date("YYY-mm-dd HH:ii:ss"),
+                            'action'=>"order exception",
+                            'message'=>$e->getMessage(),
+                            'table_name'=>"",
+                            'count'=>0,
+                            'curId'=>$expId,
+                            'is_sync'=>0,
+                        ));
                 Yii::app()->user->setFlash('error', "{$e->getMessage()}");
                 //$this->refresh();
             }
@@ -1138,7 +1154,7 @@ class ExpenseController extends Controller
           $model = Yii::app()->db->createCommand()
               ->select()
               ->from('expense ex')
-              ->where('ex.table = :table AND ex.employee_id = :user AND ex.status != 0',array(':table'=>$table,':user'=>$user))
+              ->where('ex.table = :table AND ex.employee_id = :user AND ex.status != 0 and ex.debt = 0',array(':table'=>$table,':user'=>$user))
               ->queryAll();
       }
       else{

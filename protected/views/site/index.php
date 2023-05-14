@@ -163,10 +163,10 @@
                                                 var tableClass = ".table-"+ b.table;
                                                 $(tableClass).addClass('actived');
                                             }
-                                            else{
-                                                var tableClass = ".table-"+ b.table;
-                                                $(tableClass).addClass('disabled').addClass('btn-danger');
-                                            }
+                                            // else{
+                                            //     var tableClass = ".table-"+ b.table;
+                                            //     $(tableClass).addClass('disabled').addClass('btn-danger');
+                                            // }
                                         });
                                     }
                                 });
