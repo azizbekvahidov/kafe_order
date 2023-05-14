@@ -466,7 +466,7 @@
 
                             <div class="form-actions pull-right submitDiv col-xs-12 " style="margin-top:45px;">
                                 <button class="btn btn-success " id="submitBtn" type="button">Добавить</button>
-                                <?=CHtml::link('<i class="fa fa-print"></i>  Печать',array('/expense/printCheck?id='.$id),array('class'=>'btn btnPrint hide'))?>
+                                <?=CHtml::link('<i class="fa fa-print"></i>  Печать',array('/expense/printCheck?id=0'),array('class'=>'btn btnPrint hide'))?>
 
                             </div>
                         </td>
