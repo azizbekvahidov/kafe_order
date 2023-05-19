@@ -76,10 +76,10 @@
 
         <?if(!empty($order3))?>
             <?foreach ($order3 as $val) {?>
-                <tr class="product_<?=$val['just_id']?>">
+                <tr class="prod_<?=$val['just_id']?>">
                     <td class=" ">
                         <i class=" fa fa-check"></i>
-                        <input style="display:none" name="id[]" value="product_<?=$val['just_id']?>">
+                        <input style="display:none" name="id[]" value="prod_<?=$val['just_id']?>">
                     </td>
                     <td class="dish"><input style='display:none' type='text' name='comment[]'>
                         <?=$val['name']?>

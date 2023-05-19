@@ -438,7 +438,7 @@ class ExpenseController extends Controller
                         $types = 2;
                         $stuffMessage .= $temp[1].":".$count.",";
                     }
-                    if($temp[0] == 'product') {
+                    if($temp[0] == 'prod') {
                         $types = 3;
                         $prodMessage .= $temp[1].":".$count.",";
                     }
@@ -460,6 +460,7 @@ class ExpenseController extends Controller
 //                    ));
                 }
                 //$expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count);
+                $_POST["expenseId"] = $expId;
                 $archive_message .= ((!empty($dishMessage)) ? $dishMsg.$dishMessage : '').((!empty($stuffMessage)) ? $stuffMsg.$stuffMessage : '').((!empty($prodMessage)) ? $prodMsg.$prodMessage : '');
                 //$transaction->commit();
                 $_POST["message"] = $archive_message;
@@ -473,12 +474,6 @@ class ExpenseController extends Controller
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS,
                     http_build_query($_POST));
-
-// In real life you should use something like:
-// curl_setopt($ch, CURLOPT_POSTFIELDS,
-//          http_build_query(array('postvar1' => 'value1')));
-
-// Receive server response ...
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
                 $server_output = curl_exec($ch);
@@ -486,18 +481,11 @@ class ExpenseController extends Controller
                 print_r($server_output);
                 echo "</pre>";
 
+
                 curl_close($ch);
 
             } catch (Exception $e) {
-                Yii::app()->db->createCommand()->insert('logs',array(
-                    'log_date'=> date("YYY-mm-dd HH:ii:ss"),
-                    'action'=>"order exception",
-                    'message'=>$e->getMessage(),
-                    'table_name'=>"",
-                    'count'=>0,
-                    'curId'=>$expId,
-                    'is_sync'=>0,
-                ));
+				echo $e->getMessage();
                 //$transaction->rollBack();
                 Yii::app()->user->setFlash('error', "{$e->getMessage()}");
                 //$this->refresh();
@@ -538,7 +526,7 @@ class ExpenseController extends Controller
                         $types = 2;
                         $stuffMessage .= $temp[1].":".$count.",";
                     }
-                    if($temp[0] == 'product') {
+                    if($temp[0] == 'prod') {
                         $types = 3;
                         $prodMessage .= $temp[1].":".$count.",";
                     }
@@ -548,7 +536,6 @@ class ExpenseController extends Controller
                         ->where('expense_id = :id AND just_id = :just_id AND type = :types ',array(':id'=>$expId,':just_id'=>$temp[1],':types'=>$types))
                         ->queryRow();
                     if(!empty($model)){
-                        print_r($model,"sss");
 
                         if($count != 0) {
                             /*if ($model['count'] > $count) {
@@ -569,7 +556,7 @@ class ExpenseController extends Controller
 //                            }
 
 //                            $expense->addExpenseList($temp[1],$types,date("Y-m-d"),$count - $model["count"]);
-                            print_r($model,"sss");
+                         
                             Yii::app()->db->createCommand()->update('expense',array('expSum'=>$_POST['expSum'],'banket'=>$_POST['banket']),'expense_id = :id',array(':id'=>$expId));
                         } 
                         /*else{
@@ -634,12 +621,6 @@ class ExpenseController extends Controller
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS,
                     http_build_query($_POST));
-
-// In real life you should use something like:
-// curl_setopt($ch, CURLOPT_POSTFIELDS,
-//          http_build_query(array('postvar1' => 'value1')));
-
-// Receive server response ...
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
                 $server_output = curl_exec($ch);
@@ -652,15 +633,7 @@ class ExpenseController extends Controller
 //                $func->printCheck($expId,'update',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
             }
             catch (Exception $e){
-                Yii::app()->db->createCommand()->insert('logs',array(
-                            'log_date'=> date("YYY-mm-dd HH:ii:ss"),
-                            'action'=>"order exception",
-                            'message'=>$e->getMessage(),
-                            'table_name'=>"",
-                            'count'=>0,
-                            'curId'=>$expId,
-                            'is_sync'=>0,
-                        ));
+				echo $e->getMessage();
                 Yii::app()->user->setFlash('error', "{$e->getMessage()}");
                 //$this->refresh();
             }
