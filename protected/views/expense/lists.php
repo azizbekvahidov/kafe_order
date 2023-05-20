@@ -25,7 +25,7 @@
     <?}?>
     <? foreach($newModel3 as $val){?>
       <div class="element   ">
-        <div id="product_<?=$val["product_id"]?>" class="thumbnail plus ">
+        <div id="prod_<?=$val["product_id"]?>" class="thumbnail plus ">
           <img class="img-rounded" src="<?php echo Yii::app()->request->baseUrl; ?>/images/dish_bg.jpg" alt="<?=$val["name"]?>" />
           <span class="texts">
             <?=$val["name"]?>

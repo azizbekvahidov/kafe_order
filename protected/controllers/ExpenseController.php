@@ -135,32 +135,41 @@ class ExpenseController extends Controller
                 ->order('ex.order_date')
                 ->queryRow();
             $order = Yii::app()->db->createCommand()
-                ->select('ord.just_id,ord.count,d.name,ord.type,ord.order_id')
+                ->select('ord.just_id,ord.count,d.name,ord.type,ord.order_id,(select p.price from prices p where p.types=ord.type and p.just_id=ord.just_id order by price_date desc limit 1) as price')
                 ->from('orders ord')
                 ->join('dishes d', 'd.dish_id = ord.just_id')
                 ->where('ord.expense_id = :id AND ord.type = :types AND ord.deleted = 0', array(':id' => $model['expense_id'], ':types' => 1))
                 ->queryAll();
+                // echo "<pre>";
+                // print_r($order);
+                // echo "</pre>";
             $order2 = Yii::app()->db->createCommand()
-                ->select('ord.just_id,ord.count,h.name,ord.type,ord.order_id')
+                ->select('ord.just_id,ord.count,h.name,ord.type,ord.order_id,(select p.price from prices p where p.types=ord.type and p.just_id=ord.just_id order by price_date desc limit 1) as price')
                 ->from('orders ord')
                 ->join('halfstaff h', 'h.halfstuff_id = ord.just_id')
                 ->where('ord.expense_id = :id AND ord.type = :types AND ord.deleted = 0', array(':id' => $model['expense_id'], ':types' => 2))
                 ->queryAll();
             $order3 = Yii::app()->db->createCommand()
-                ->select('ord.just_id,ord.count,p.name,ord.type,ord.order_id')
+                ->select('ord.just_id,ord.count,p.name,ord.type,ord.order_id,(select p.price from prices p where p.types=ord.type and p.just_id=ord.just_id order by price_date desc limit 1) as price')
                 ->from('orders ord')
                 ->join('products p', 'p.product_id = ord.just_id')
                 ->where('ord.expense_id = :id AND ord.type = :types AND ord.deleted = 0', array(':id' => $model['expense_id'], ':types' => 3))
                 ->queryAll();
         }
-
-        $this->renderPartial('orders',array(
+        
+        echo json_encode(array(
             'order'=>$order,
             'order2'=>$order2,
             'order3'=>$order3,
             'model'=>$model,
-//            'dates'=>$dates
         ));
+//         $this->renderPartial('orders',array(
+//             'order'=>$order,
+//             'order2'=>$order2,
+//             'order3'=>$order3,
+//             'model'=>$model,
+// //            'dates'=>$dates
+//         ));
 
     }
 
@@ -464,7 +473,9 @@ class ExpenseController extends Controller
                 $archive_message .= ((!empty($dishMessage)) ? $dishMsg.$dishMessage : '').((!empty($stuffMessage)) ? $stuffMsg.$stuffMessage : '').((!empty($prodMessage)) ? $prodMsg.$prodMessage : '');
                 //$transaction->commit();
                 $_POST["message"] = $archive_message;
-//                $func->PrintCheck($expId,'create',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
+            //     $archive = new ArchiveOrder();
+            //     $archive->setArchive('create', $expId, $archive_message,$_POST['employee_id']);
+            //    $func->PrintCheck($expId,'create',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
                 $_POST["method"] = "create";
 
                 $ch = curl_init();
@@ -609,8 +620,9 @@ class ExpenseController extends Controller
                         ), 'order_id = :id',array(':id'=>$val['order_id']));
                     }
                 }
-                $archive_message .= ((!empty($dishMessage)) ? $dishMsg.$dishMessage : '').((!empty($stuffMessage)) ? $stuffMsg.$stuffMessage : '').((!empty($prodMessage)) ? $prodMsg.$prodMessage : '');
-
+                // $archive_message .= ((!empty($dishMessage)) ? $dishMsg.$dishMessage : '').((!empty($stuffMessage)) ? $stuffMsg.$stuffMessage : '').((!empty($prodMessage)) ? $prodMsg.$prodMessage : '');
+                // $archive = new ArchiveOrder();
+                // $archive->setArchive('create', $expId, $archive_message,$_POST['employee_id']);
                 $_POST["method"] = "update";
                 $_POST["message"] = $archive_message;
 
@@ -630,7 +642,7 @@ class ExpenseController extends Controller
 
                 curl_close($ch);
 
-//                $func->printCheck($expId,'update',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
+            //    $func->printCheck($expId,'update',$_POST['id'],$_POST['employee_id'],$_POST['count'],$_POST['table'],$_POST["comment"]);
             }
             catch (Exception $e){
 				echo $e->getMessage();
@@ -794,8 +806,9 @@ class ExpenseController extends Controller
     public function actionLists(){
         $id = $_POST['id'];
 
+
         $newModel1 = Yii::app()->db->createCommand()
-            ->select()
+            ->select("")
             ->from("menu t")
             ->join("dishes d","d.dish_id = t.just_id")
             ->where('t.type_id = :types AND t.type = :type AND t.mType = :mType',array(':types'=>$id,':type'=>1,':mType'=>1))
@@ -820,6 +833,38 @@ class ExpenseController extends Controller
         'newModel3'=>$newModel3,
         'newModel2'=>$newModel2,
         ));
+
+        // $newModel1 = Yii::app()->db->createCommand()
+        //     ->select("t.just_id as id, d.name, (select p.price from prices p where p.types=t.type and p.just_id=t.just_id order by price_date desc limit 1) as price")
+        //     ->from("menu t")
+        //     ->join("dishes d","d.dish_id = t.just_id")
+        //     ->where('t.type_id = :types AND t.type = :type AND t.mType = :mType',array(':types'=>$id,':type'=>1,':mType'=>1))
+        //     ->queryAll();
+
+        // $newModel2 = Yii::app()->db->createCommand()
+        //     ->select("t.just_id as id, h.name, (select p.price from prices p where p.types=t.type and p.just_id=t.just_id order by price_date desc limit 1) as price")
+        //     ->from("menu t")
+        //     ->join("halfstaff h","h.halfstuff_id = t.just_id")
+        //     ->where('t.type_id = :types AND t.type = :type AND t.mType = :mType',array(':types'=>$id,':type'=>2,':mType'=>1))
+        //     ->queryAll();
+
+        // $newModel3 = Yii::app()->db->createCommand()
+        //     ->select("t.just_id as id, p.name, (select p.price from prices p where p.types=t.type and p.just_id=t.just_id order by price_date desc limit 1) as price")
+        //     ->from("menu t")
+        //     ->join("products p","p.product_id = t.just_id")
+        //     ->where('t.type_id = :types AND t.type = :type AND t.mType = :mType',array(':types'=>$id,':type'=>3,':mType'=>1))
+        //     ->queryAll();
+
+        // // echo json_encode(array(
+        // // 'menu1'=>$newModel1,
+        // // 'menu3'=>$newModel3,
+        // // 'menu2'=>$newModel2,
+        // // ));
+        // $this->renderPartial('lists',array(
+        //     'newModel1'=>$newModel1,
+        //     'newModel3'=>$newModel3,
+        //     'newModel2'=>$newModel2,
+        //     ));
     }
 
     public function actionUpLists(){

@@ -265,7 +265,8 @@ class Functions {
 
 
     public function PrintCheck($expId,$action,$id,$user,$count,$table,$comment){
-      $result = array();
+        
+                $result = array();
       $depId = array();
       $archive = new ArchiveOrder();
         $comments = array();
@@ -283,7 +284,7 @@ class Functions {
                       $model = $this->getDish($expl[1],$action,$expId);
                       if($model != 0) {
                           $result[$model['depName']][$model['dName']]=$count[$key];
-                          $comments[$model['depName']][$model['dName']].=$comment[$key];
+                          $comments[$model['depName']][$model['dName']]=$comment[$key];
                           $print[$model['depName']]=$model['printer'];
                       }
                   }
@@ -291,7 +292,7 @@ class Functions {
                       $model = $this->getStuff($expl[1],$action,$expId);
                       if($model != 0) {
                           $result[$model['depName']][$model['dName']]=$count[$key];
-                          $comments[$model['depName']][$model['dName']].=$comment[$key];
+                          $comments[$model['depName']][$model['dName']]=$comment[$key];
                           $print[$model['depName']]=$model['printer'];
                       }
                   }
@@ -299,7 +300,7 @@ class Functions {
                       $model = $this->getProd($expl[1],$action,$expId);
                       if($model != 0) {
                           $result[$model['depName']][$model['dName']]=$count[$key];
-                          $comments[$model['depName']][$model['dName']].=$comment[$key];
+                          $comments[$model['depName']][$model['dName']]=$comment[$key];
                           $print[$model['depName']]=$model['printer'];
                       }
                   }
@@ -359,15 +360,16 @@ class Functions {
                   }
               }
           }
-          if(!empty($id))
+          if(!empty($id)){
+            
               foreach ($id as $key => $val) {
                   $expl = explode('_',$val);
-                  switch ($expl[0]){
+                  switch ($expl[0]){    
                       case "dish":
                           $model = $this->getDish($expl[1],$action,$expId);
                           if($model != 0) {
                               $result[$model['depName']][$model['dName']]=$count[$key];
-                              $comments[$model['depName']][$model['dName']].=$comment[$key];
+                              $comments[$model['depName']][$model['dName']]=$comment[$key];
                               $print[$model['depName']]=$model['printer'];
                           }
                           break;
@@ -375,7 +377,7 @@ class Functions {
                           $model = $this->getStuff($expl[1],$action,$expId);
                           if($model != 0) {
                               $result[$model['depName']][$model['dName']]=$count[$key];
-                              $comments[$model['depName']][$model['dName']].=$comment[$key];
+                              $comments[$model['depName']][$model['dName']]=$comment[$key];
                               $print[$model['depName']]=$model['printer'];
                           }
                           break;
@@ -383,32 +385,28 @@ class Functions {
                           $model = $this->getProd($expl[1],$action,$expId);
                           if($model != 0) {
                               $result[$model['depName']][$model['dName']]=$count[$key];
-                              $comments[$model['depName']][$model['dName']].=$comment[$key];
+                              $comments[$model['depName']][$model['dName']]=$comment[$key];
                               $print[$model['depName']]=$model['printer'];
                           }
                           break;
                   }
               }
+            }
+              
+              
           $result = $this->ShowChange($result,$resultArchive);
       }
       foreach($result as $key => $val) {
 
           $date=date("Y-m-d H:i:s");
-          Yii::app()->db->createCommand()->insert("print",array(
-              'waiter' => $user["name"],
-              'table' => $table,
-              'printTime' => $date,
-              'department' => $key." - ".$action,
-              'printer' => $print[$key],
-          ));
-            $lastId = Yii::app()->db->getLastInsertID();
-          $this->PrintChecks($print,$val,$lastId,$user,$table,$key,$date, $this->recurseLimit,$comments[$key]);
+          $this->PrintChecks($print,$val,$user,$table,$key,$date, $this->recurseLimit,$comments[$key]);
 
       }
 
     }
-    public function PrintChecks($print,$val,$lastId,$user,$table,$key,$date, $limit,$comment){
+    public function PrintChecks($print,$val,$user,$table,$key,$date, $limit,$comment){
         try {
+                        
             if (!empty($print[$key])) {
 //                $profile = CapabilityProfile::load("simple");
                 //              $connector = new NetworkPrintConnector("XP-58", 9100);
@@ -417,7 +415,7 @@ class Functions {
                 if(Yii::app()->config->get("printer_interface") == "ethernet")
                     $connector=new NetworkPrintConnector($print[$key],9100);
                 $printer=new Printer($connector);
-            }
+            
 
             //          $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
             $printer->setTextSize(2, 2);
@@ -426,14 +424,14 @@ class Functions {
 
             $printer->setTextSize(1, 1);
             foreach ($val as $keys=>$value) {
-                Yii::app()->db->createCommand()->insert("printdetail", array(
-                    'name'=>$keys,
-                    'cnt'=>$value,
-                    'printId'=>$lastId,
-                ));
+                // Yii::app()->db->createCommand()->insert("printdetail", array(
+                //     'name'=>$keys,
+                //     'cnt'=>$value,
+                //     'printId'=>$lastId,
+                // ));
                 $order = new item($keys, $value);
                 $printer -> text($order);
-                if($comment[$keys] != "") {
+                if(isset($comment[$keys]) && $comment[$keys] != "") {
                     $printer->text($comment[$keys]);
                 }
                 $printer->feed();
@@ -459,30 +457,32 @@ class Functions {
             $printer->pulse();
             $printer -> getPrintConnector() -> write(PRINTER::ESC . "B" . chr(4) . chr(1));
             $printer->close();
+        } 
+        else{
+            
+            Yii::app()->db->createCommand()->insert("logs", array(
+                "log_date"=>date("Y-m-d H:i:s"),
+                "actions"=>"printException",
+                "table_name"=>"",
+                "curId"=>0,
+                "message"=>"Printer name is empty",
+                "count"=>0
+            ));
+        }
         }
         catch (Exception $exception){
-//            if($limit != 3) {
-//                Yii::app()->db->createCommand()->insert("logs", array(
-//                    "log_date"=>date("Y-m-d H:i:s"),
-//                    "actions"=>"printException",
-//                    "table_name"=>"",
-//                    "curId"=>0,
-//                    "message"=>$exception->getMessage(),
-//                    "count"=>0
-//                ));
-//                $limit++;
-//                $this->PrintChecks($print,$val,$lastId,$user,$table,$key,$date,$limit);
-//            }
-//            else{
-//                Yii::app()->db->createCommand()->insert("logs", array(
-//                    "log_date"=>date("Y-m-d H:i:s"),
-//                    "actions"=>"printException",
-//                    "table_name"=>"",
-//                    "curId"=>0,
-//                    "message"=>$exception->getMessage(),
-//                    "count"=>0
-//                ));
-//            }
+                        echo "<pre>";
+                        print_r($exception->getMessage());
+                        echo "</pre>";
+            
+               Yii::app()->db->createCommand()->insert("logs", array(
+                   "log_date"=>date("Y-m-d H:i:s"),
+                   "actions"=>"printException",
+                   "table_name"=>"",
+                   "curId"=>0,
+                   "message"=>$exception->getMessage(),
+                   "count"=>0
+               ));
         }
     }
 
@@ -502,11 +502,25 @@ class Functions {
     }
 
     public function ShowChange($array1,$array2){
+        
+        // echo "<pre>";
+        // print_r($array1);
+        // echo "</pre>";
+        
+        // echo "<pre>";
+        // print_r($array2);
+        // echo "</pre>";
+        // die();
         $result=array();
         if(!empty($array2)) {
             foreach ($array1 as $key=>$value) {
                 foreach ($value as $keys=>$val) {
+                    if(isset($array2[$key][$keys])){
                     $temp=$val - $array2[$key][$keys];
+                }
+                else{
+                    $temp = $val;
+                }
                     if ($temp != 0) {
                         $result[$key][$keys]=$temp;
                     }
@@ -514,7 +528,12 @@ class Functions {
             }
             foreach ($array2 as $key=>$value) {
                 foreach ($value as $keys=>$val) {
-                    $temp=$val - $array1[$key][$keys];
+                    if(isset($array1[$key][$keys])){
+                        $temp=$val - $array2[$key][$keys];
+                    }
+                    else{
+                        $temp = $val;
+                    }
                     if ($temp != 0) {
                         $result[$key][$keys]=-$temp;
                     }

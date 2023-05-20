@@ -319,7 +319,12 @@
                         url: "<?php echo Yii::app()->createUrl('expense/orders'); ?>",
                         data: 'table='+tables+"&user="+userData.employee_id,
                         success: function(data) {
-                            $("#dataTable").html(data);
+                            
+                            
+                            data = JSON.parse(data);
+                                data = getOrderView(data);
+                              $("#dataTable").html(data);
+                              getSum();
                         }
                     });
 
@@ -334,7 +339,11 @@
                           url: "<?php echo Yii::app()->createUrl('expense/orders'); ?>",
                           data: 'expense='+expenses+"&user="+userData.employee_id,
                           success: function(data) {
+
+                                data = JSON.parse(data);
+                                data = getOrderView(data);
                               $("#dataTable").html(data);
+                              getSum();
 							$(".btnPrint").attr("data-href","/expense/printExpCheck?exp="+expenses);
                           }
                       });
@@ -476,6 +485,8 @@
         <?echo Chtml::textField('Expense[comment]','',array('style'=>'display:none'))?>
     </div>
         </div>
+        <script src="/js/orders.js"></script>
+        <script src="/js/menu_list.js"></script>
     <script>
     var counts = [],
         temps,
@@ -645,6 +656,7 @@
             url: "<?php echo Yii::app()->createUrl('expense/create'); ?>",
             data: data+"&table="+tables+"&employee_id="+userData.employee_id+"&expenseId="+ $.session.get('expId')+"&peoples="+people+"&expSum="+expSum+"&check="+userData.check_percent+"&banket="+banket,
             success: function(response) {
+                console.log(JSON.parse(response));
                 // $.ajax({
                 //     cors: true ,
                 //     contentType:'application/json',
@@ -661,7 +673,6 @@
                 //     }
                 // });
             }
-
         });
         $('#order').children('tr').remove();
         $('#Expense_debt').removeAttr('checked');
@@ -694,6 +705,8 @@
             url: "<?php echo Yii::app()->createUrl('expense/lists'); ?>",
             data: "id="+thisId,
             success: function(data){
+                // data = JSON.parse(data);
+                // data = getMenuList(data);
                 $('#data').html(data);
             }
         });
