@@ -112,7 +112,7 @@ class ExpenseController extends Controller
     public function actionTables(){
         $dates = date('Y-m-d');
         $model = Yii::app()->db->createCommand()
-            ->select('')
+            ->select('expense_id, table, order_date, expSum, pCount,employee_id')
             ->from('expense ex')
             ->where('ex.status = :status AND ex.debt = 0 ',array(':status'=>1))
             ->order('ex.order_date')
@@ -1242,7 +1242,7 @@ class ExpenseController extends Controller
     public function actionPrintExpCheck($exp){
         $percent = Yii::app()->config->get('percent');
         $expense = Yii::app()->db->createCommand()
-            ->select('ex.order_date,emp.name,ex.expense_id,ex.banket,t.name as Tname,emp.check_percent,discount')
+            ->select('ex.order_date,emp.name,ex.expense_id,ex.banket,t.name as Tname,emp.check_percent,ex.discount,ex.employee_id')
             ->from('expense ex')
             ->join('employee emp','emp.employee_id = ex.employee_id')
             ->leftjoin('tables t','t.table_num = ex.table')

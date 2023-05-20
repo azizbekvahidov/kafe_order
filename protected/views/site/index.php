@@ -42,6 +42,7 @@
         var userData;
         var expId;
         var tables;
+        var tableList;
         var people;
         var shifted = false;
         var commentedElement = "";
@@ -157,6 +158,7 @@
                                     url: "<?php echo Yii::app()->createUrl('expense/tables'); ?>",
                                     success: function(data){
                                         data = JSON.parse(data);
+                                        tableList = data;
                                         $.each(data, function(i, b) {
 
                                             if(b.employee_id == userData.employee_id){
@@ -255,21 +257,18 @@
             var tableClassName = 'table-'+tables;
             console.log($(tableClassName));
             if(newOrder == null){
-                $.ajax({
-                    type: "POST",
-                    url: "<?php echo Yii::app()->createUrl('expense/checkTable'); ?>",
-                    data: 'table='+tables+"&user="+userData.employee_id,
-                    success: function(data) {
-                      var htmlText = '<ul>';
-                            data = JSON.parse(data);
-                            if(data.people){
-                              htmlText += '<li class="list-title">Кол-во гостей</li>';
-                              $.each(data.people, function(i, b) {
-                                htmlText += '<li data-count="'+b+'" data-type="people" class="ordering">'+b+'</li>';
-                              });
-                            }
-                            if(data.expense){
-                              $.each(data.expense, function(i, b) {
+                
+                var data = tableList.filter((e)=> e.employee_id == userData.employee_id && e.table == tables);
+                var htmlText = '<ul>';
+                            // data = JSON.parse(data);
+                            // if(data.people){
+                            //   htmlText += '<li class="list-title">Кол-во гостей</li>';
+                            //   $.each(data.people, function(i, b) {
+                            //     htmlText += '<li data-count="'+b+'" data-type="people" class="ordering">'+b+'</li>';
+                            //   });
+                            // }
+                            if(data){
+                              $.each(data, function(i, b) {
                                 var times = b.order_date.split(' ');
                                  htmlText += '<li data-count="'+b.expense_id+'" data-type="expense" class="ordering">'+b.pCount+' &nbsp; &nbsp; &nbsp; '+times[1]+'</li>';
                               });
@@ -277,34 +276,59 @@
                             }
                         htmlText += "</ul>";
                         $('#dropdown-wrap .modal-content').html(htmlText);
-                    }
-                });
+                
+                // $.ajax({
+                //     type: "POST",
+                //     url: "<?php echo Yii::app()->createUrl('expense/checkTable'); ?>",
+                //     data: 'table='+tables+"&user="+userData.employee_id,
+                //     success: function(data) {
+                //       var htmlText = '<ul>';
+                //             data = JSON.parse(data);
+                //             if(data.people){
+                //               htmlText += '<li class="list-title">Кол-во гостей</li>';
+                //               $.each(data.people, function(i, b) {
+                //                 htmlText += '<li data-count="'+b+'" data-type="people" class="ordering">'+b+'</li>';
+                //               });
+                //             }
+                //             if(data.expense){
+                //               $.each(data.expense, function(i, b) {
+                //                 var times = b.order_date.split(' ');
+                //                  htmlText += '<li data-count="'+b.expense_id+'" data-type="expense" class="ordering">'+b.pCount+' &nbsp; &nbsp; &nbsp; '+times[1]+'</li>';
+                //               });
+                //               htmlText += '<li class="newOrder">Новый заказ</li>';
+                //             }
+                //         htmlText += "</ul>";
+                //         $('#dropdown-wrap .modal-content').html(htmlText);
+                //     }
+                // });
             }
             else{
-              $.ajax({
-                  type: "POST",
-                  url: "<?php echo Yii::app()->createUrl('expense/checkTable'); ?>",
-                  data: 'table='+tables+"&user="+userData.employee_id+"&newOrder=0",
-                  success: function(data) {
-                    var htmlText = '<ul>'
-                          data = JSON.parse(data);
-                            htmlText += '<li class="list-title">Кол-во гостей</li>'
-                            $.each(data.people, function(i, b) {
-                              htmlText += '<li data-count="'+b+'" data-type="people" class="ordering">'+b+'</li>';
-                            });
+                // var data = tableList.where((e)=> e.employee_id == userData.employee_id && e.table == tables)
+                var htmlText = '<ul>';
+                            htmlText += '<li class="list-title">Кол-во гостей</li>';
+                            for (let index = 1; index < 11; index++) {
+                               
+                                htmlText += '<li data-count="'+index+'" data-type="people" class="ordering">'+index+'</li>';
+                                
+                            }
 
                       htmlText += "</ul>";
                       $('#dropdown-wrap .modal-content').html(htmlText);
-                  }
-              });
+            //   $.ajax({
+            //       type: "POST",
+            //       url: "<?php echo Yii::app()->createUrl('expense/checkTable'); ?>",
+            //       data: 'table='+tables+"&user="+userData.employee_id+"&newOrder=0",
+            //       success: function(data) {
+                    
+            //       }
+            //   });
             }
         }
         $(document).ready(function(){
-            $(document).on('click','.tableBtn',function(){
+            $(document).on('click','.tableBtn',function(e){
                 var temp = $(this).attr('id').split('-');
                 tables = temp[1];
                 $('#tableNum span').text($(this).text());
-
                 checkTables(tables);
 
             });
@@ -640,6 +664,8 @@
 
     $(document).on('click','.expCheck',function(){
 		$(".btnPrint").click();
+                sessionStorage.clear();
+        $("#dataTable").html("");
         $('#createDiv').css('display','none');
         $('#loginDiv').css('display','block');
     });
@@ -651,12 +677,15 @@
         var banket = ($("#banket").is(":checked")) ? 1 : 0;
         $(".btnPrint").attr('href',linkText);
         //$(".btnPrint").click();
+                sessionStorage.clear();
+        $("#dataTable").html("");
         $.ajax({
             type: "POST",
             url: "<?php echo Yii::app()->createUrl('expense/create'); ?>",
             data: data+"&table="+tables+"&employee_id="+userData.employee_id+"&expenseId="+ $.session.get('expId')+"&peoples="+people+"&expSum="+expSum+"&check="+userData.check_percent+"&banket="+banket,
             success: function(response) {
-                console.log(JSON.parse(response));
+                
+                // sessionStorage.removeItem('expId');
                 // $.ajax({
                 //     cors: true ,
                 //     contentType:'application/json',
@@ -776,21 +805,23 @@
     });
 
     $(document).on('click','#toTable',function(){
-        $.ajax({
-            type: "POST",
-            url: "<?php echo Yii::app()->createUrl('expense/tables'); ?>",
-            success: function(data){
-                data = JSON.parse(data);
-                $.each(data, function(i, b) {
+        sessionStorage.clear();
+        $("#dataTable").html("");
+        // $.ajax({
+        //     type: "POST",
+        //     url: "<?php echo Yii::app()->createUrl('expense/tables'); ?>",
+        //     success: function(data){
+        //         data = JSON.parse(data);
+        //         $.each(data, function(i, b) {
 
-                        if (b.employee_id == userData.employee_id) {
-                            var tableClass = ".table-" + b.table;
-                            $(tableClass).addClass('actived');
-                        }
+        //                 if (b.employee_id == userData.employee_id) {
+        //                     var tableClass = ".table-" + b.table;
+        //                     $(tableClass).addClass('actived');
+        //                 }
 
-                });
-            }
-        });
+        //         });
+        //     }
+        // });
         $('#createDiv').css('display','none');
         $('#tablesDiv').css('display','block');
     });
