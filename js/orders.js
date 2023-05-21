@@ -5,15 +5,15 @@ function getOrderView(result){
         <tr>\
             <th id="all" class=" col-sm-1"><a class="btn all hide">Все</a></th>\
             <th id="ordName" class="col-sm-7">Название\
-                    <input style="display:none" name="action" id="action" value="'+Object.keys(result.model).length != 0 ? "update" : "create"+'">\
+                    <input style="display:none" name="action" id="action" value="'+(Object.keys(result.model).length != 0 ? "update" : "create")+'">\
             </th>\
             <th id="ordPrice" class="col-sm-2">Цена</th>\
             <th id="ordCount" class="col-sm-2">кол.</th>\
         </tr>\
     </thead>\
     <tbody id="order">';
-        
-    for (let i = 0; i < array.length; i++) {
+        if(result.order.length != 0)
+    for (let i = 0; i < result.order.length; i++) {
         value = result.order[i];
         
     
@@ -26,7 +26,7 @@ function getOrderView(result){
                     <td class="dish"><input style="display:none" type="text" name="comment[]">'
                         +value.name+
                     '</td>\
-                    <td>${value.price}</td>\
+                    <td>'+value.price+'</td>\
                     <td class="cnt">\
                         <input name="count[]" style="display:none" value="'+value.count+'">\
                         <a type="button" class="pluss btn hide">\
@@ -41,8 +41,10 @@ function getOrderView(result){
                 </tr>';
             }
     
-            for (let i = 0; i < array.length; i++) {
+            if(result.order2.length != 0)
+            for (let i = 0; i < result.order2.length; i++) {
                 value = result.order2[i];
+                console.log(value);
         text += '<tr class="stuff_'+value.just_id+'">\
                     <td class="">\
                         <i class=" fa fa-check"></i>\
@@ -51,7 +53,7 @@ function getOrderView(result){
                     <td class="dish"><input style="display:none" type="text" name="comment[]">'
                         +value.name+
                     '</td>\
-                    <td>${value.price}</td>\
+                    <td>'+value.price+'</td>\
                     <td class="cnt">\
                         <input name="count[]" style="display:none" value="'+value.count+'">\
                         <a type="button" class="pluss btn hide">\
@@ -67,7 +69,8 @@ function getOrderView(result){
     }
                 
     
-    for (let i = 0; i < array.length; i++) {
+    if(result.order3.length != 0)
+    for (let i = 0; i < result.order3.length; i++) {
         value = result.order3[i];
         text += '<tr class="prod_'+value.just_id+'">\
                     <td class="">\
@@ -77,7 +80,7 @@ function getOrderView(result){
                     <td class="dish"><input style="display:none" type="text" name="comment[]">'
                         +value.name+
                     '</td>\
-                    <td>${value.price}</td>\
+                    <td>'+value.price+'</td>\
                     <td class="cnt">\
                         <input name="count[]" style="display:none" value="'+value.count+'">\
                         <a type="button" class="pluss btn hide">\
@@ -100,7 +103,7 @@ function getOrderView(result){
         <tr>\
             <td class="text-center" colspan="4">';
                  if(Object.keys(result.model).length != 0){
-                  text += '<a style="padding: 3px 5px;" href="javascript:;" '+result.model.print == 1 ? "disabled" : ""+' type="button" name="button" class="btn btn-info expCheck">Напечатать счет</a>\
+                  text += '<a style="padding: 3px 5px;" href="javascript:;" '+(result.model.print == 1 ? "disabled" : "")+' type="button" name="button" class="btn btn-info expCheck">Напечатать счет</a>\
                     <br><br>';
                 }
             text += '</td>\

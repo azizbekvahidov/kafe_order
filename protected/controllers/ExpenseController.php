@@ -620,9 +620,10 @@ class ExpenseController extends Controller
                         ), 'order_id = :id',array(':id'=>$val['order_id']));
                     }
                 }
-                // $archive_message .= ((!empty($dishMessage)) ? $dishMsg.$dishMessage : '').((!empty($stuffMessage)) ? $stuffMsg.$stuffMessage : '').((!empty($prodMessage)) ? $prodMsg.$prodMessage : '');
+                $archive_message .= ((!empty($dishMessage)) ? $dishMsg.$dishMessage : '').((!empty($stuffMessage)) ? $stuffMsg.$stuffMessage : '').((!empty($prodMessage)) ? $prodMsg.$prodMessage : '');
                 // $archive = new ArchiveOrder();
                 // $archive->setArchive('create', $expId, $archive_message,$_POST['employee_id']);
+                
                 $_POST["method"] = "update";
                 $_POST["message"] = $archive_message;
 

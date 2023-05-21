@@ -255,9 +255,11 @@
     <script>
         function getfilterTable(data,table){
             var result = [];
-            for (let i = 0; i < array.length; i++) {
+            var cnt = 0;
+            for (let i = 0; i < data.length; i++) {
                 if(data[i].employee_id == userData.employee_id && data[i].table == tables){
-                    result[i] = data[i];
+                    result[cnt] = data[i];
+                    cnt++;
                 }
                 
             }
@@ -279,6 +281,7 @@
                             // }
                             if(data){
                               $.each(data, function(i, b) {
+
                                 var times = b.order_date.split(' ');
                                  htmlText += '<li data-count="'+b.expense_id+'" data-type="expense" class="ordering">'+b.pCount+' &nbsp; &nbsp; &nbsp; '+times[1]+'</li>';
                               });
