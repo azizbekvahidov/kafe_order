@@ -253,12 +253,22 @@
         </div>
     </div>
     <script>
+        function getfilterTable(data,table){
+            var result = [];
+            for (let i = 0; i < array.length; i++) {
+                if(data[i].employee_id == userData.employee_id && data[i].table == tables){
+                    result[i] = data[i];
+                }
+                
+            }
+            return result;
+        }
         function checkTables(tables,newOrder){
             var tableClassName = 'table-'+tables;
             console.log($(tableClassName));
             if(newOrder == null){
                 
-                var data = tableList.filter((e)=> e.employee_id == userData.employee_id && e.table == tables);
+                var data = getfilterTable(tableList,tables);
                 var htmlText = '<ul>';
                             // data = JSON.parse(data);
                             // if(data.people){
@@ -510,7 +520,7 @@
     </div>
         </div>
         <script src="/js/orders.js"></script>
-        <script src="/js/menu_list.js"></script>
+        <!-- <script src="/js/menu_list.js"></script> -->
     <script>
     var counts = [],
         temps,
